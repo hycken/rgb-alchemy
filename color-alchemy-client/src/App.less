@@ -1,0 +1,249 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --pageBackground: white;
+    --textColor: black;
+    --boardBackground: rgba(0, 0, 0, 0.05);
+    --dialogBackground: white;
+    --dialogText: black;
+    --tileBorderColor: rgba(128, 128, 128, 1);
+
+    --buttonTextColor: white;
+    --buttonBackground: var(--rainbow);
+
+    --speed: 0.025s;
+    --rainbow: linear-gradient(-45deg,
+            rgba(255, 0, 0, 1) 0%,
+            rgba(255, 154, 0, 1) 10%,
+            rgba(208, 222, 33, 1) 20%,
+            rgba(79, 220, 74, 1) 30%,
+            rgba(63, 218, 216, 1) 40%,
+            rgba(47, 201, 226, 1) 50%,
+            rgba(28, 127, 238, 1) 60%,
+            rgba(95, 21, 242, 1) 70%,
+            rgba(186, 12, 248, 1) 80%,
+            rgba(251, 7, 217, 1) 90%,
+            rgba(255, 0, 0, 1) 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --pageBackground: black;
+        --boardBackground: rgba(255, 255, 255, 0.05);
+        --textColor: #ddd;
+
+        --dialogBackground: rgb(20, 20, 20);
+        --dialogText: white;
+
+        --tileBorderColor: rgba(128, 128, 128, 0.5);
+    }
+}
+
+html {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    background: var(--pageBackground);
+    color: var(--textColor);
+}
+
+dl {
+    display: grid;
+    grid-template-columns: 50% auto;
+    flex-direction: row;
+    line-height: 22px;
+    margin: 15px 0px;
+    gap: 2px 5px;
+    line-height: 22px;
+    color: var(--textColor);
+
+    dt {
+        grid-column: 1;
+        text-align: right;
+    }
+
+    dd {
+        grid-column: 2;
+        text-align: left;
+        font-weight: 400;
+        margin: 0;
+        display: grid;
+        grid-template-columns: 22px auto;
+    }
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+
+    justify-items: center;
+    align-items: center;
+
+    margin-top: 4em;
+
+    >header {
+        font-weight: 900;
+        font-size: 2.5rem;
+
+        span {
+            background: var(--rainbow);
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+    }
+}
+
+.Game {
+    margin: auto;
+    //width: 00px;
+    max-width: 100%;
+    text-align: center;
+}
+
+.Board {
+    display: inline-block;
+    margin: auto;
+    padding: 15px;
+    background: var(--boardBackground);
+    border-radius: 15px;
+
+    table {
+        border-collapse: separate;
+        border-spacing: 3px;
+    }
+}
+
+@keyframes expand {
+    from {
+        opacity: 0;
+    }
+}
+
+.Dialog {
+    backdrop-filter: blur(10px);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    background: rgba(0, 0, 0, 0.25);
+    animation: expand .5s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    section {
+        color: var(--dialogText);
+        background: var(--dialogBackground);
+        padding: 20px 20px 30px;
+        border-radius: 20px;
+
+        header {
+            font-size: 5em;
+            line-height: 1em;
+            font-weight: bold;
+            color: var(--dialogText);
+        }
+
+        p {
+            margin: 10px 0 20px;
+        }
+    }
+
+    button {
+        color: var(--buttonTextColor);
+        background: var(--buttonBackground);
+        text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.75);
+
+        font-size: 1.5em;
+        font-weight: bold;
+        padding: 5px 15px;
+        margin: 0px 15px;
+        border: 1px solid var(--buttonTextColor);
+        border-radius: 10px;
+
+        box-shadow: 0px 0px 2px var(--buttonTextColor);
+    }
+}
+
+
+.Tile,
+.SourcePoint {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--tileBorderColor);
+    border-radius: 3px;
+    transition: background 0.1s ease-in-out, border-color 0.1s ease-in-out;
+}
+
+.SourcePoint {
+    border-radius: 10px;
+}
+
+// Fix buggy cursor when over drop target.
+body:has(.SourcePoint.Active) {
+    cursor: copy !important;
+}
+
+.Clickable {
+    cursor: pointer;
+}
+
+.Draggable {
+    position: relative;
+
+    &:not(.Dragging) {
+        cursor: grab;
+    }
+}
+
+.Dragging .Tile {
+    opacity: 0.85;
+}
+
+.Closest .Tile {
+    border-color: red;
+}
+
+// Animate Tile background color change
+.TopEdge tbody tr:nth-of-type(2) .Tile,
+.BottomEdge tbody tr:nth-last-of-type(2) .Tile,
+.LeftEdge tbody td:nth-of-type(2) .Tile,
+.RightEdge tbody td:nth-last-of-type(2) .Tile {
+    transition-delay: calc(var(--speed) * 1);
+}
+
+.TopEdge tbody tr:nth-of-type(3) .Tile,
+.BottomEdge tbody tr:nth-last-of-type(3) .Tile,
+.LeftEdge tbody td:nth-of-type(3) .Tile,
+.RightEdge tbody td:nth-last-of-type(3) .Tile {
+    transition-delay: calc(var(--speed) * 2);
+}
+
+.TopEdge tbody tr:nth-of-type(4) .Tile,
+.BottomEdge tbody tr:nth-last-of-type(4) .Tile,
+.LeftEdge tbody td:nth-of-type(4) .Tile,
+.RightEdge tbody td:nth-last-of-type(4) .Tile {
+    transition-delay: calc(var(--speed) * 3);
+}
+
+.TopEdge tbody tr:nth-of-type(5) .Tile,
+.BottomEdge tbody tr:nth-last-of-type(5) .Tile,
+.LeftEdge tbody td:nth-of-type(5) .Tile,
+.RightEdge tbody td:nth-last-of-type(5) .Tile {
+    transition-delay: calc(var(--speed) * 4);
+}
+
+.TopEdge tbody tr:nth-of-type(5)~tr .Tile,
+.BottomEdge tbody tr:has(~tr:nth-last-of-type(5)) .Tile,
+.LeftEdge tbody td:nth-of-type(5)~td .Tile,
+.RightEdge tbody td:has(~td:nth-last-of-type(5)) .Tile {
+    transition-delay: calc(var(--speed) * 5);
+}
