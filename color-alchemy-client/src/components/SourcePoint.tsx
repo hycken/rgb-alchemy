@@ -19,5 +19,9 @@ export default function SourcePoint(props: SourcePointProps) {
     }))
 
     const styles = { backgroundColor: props.color.rgb };
-    return <div ref={drop} className={'SourcePoint' + (isActive ? ' Active' : '')} style={styles}></div>;
+    return <div ref={drop}
+        title={`${props.color.red}, ${props.color.green}, ${props.color.blue}`}
+        className={'SourcePoint' + (isActive ? ' Active' : '')}
+        style={styles}>
+    </div>;
 }
